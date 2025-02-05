@@ -27,7 +27,7 @@ type BarikoiMapGLProps = {
 }
 
 const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, scaleControl}: BarikoiMapGLProps) => {
-  const BARIKOI_API_KEY = 'bkoi_83d9e819b6e1532612d485a65af861c5a9696798352f9bc0be8d9a2430a9f9f6'
+  const BARIKOI_API_KEY = process.env.NEXT_PUBLIC_BKOI_API_KEY
   const mapStyle = `https://map.barikoi.com/styles/osm-liberty/style.json?key=${BARIKOI_API_KEY}`
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
@@ -134,7 +134,7 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
         dragRotate={false}
         attributionControl={false}
       >
-        <DeckGLOverlay layers={[layers]} />
+        {/* <DeckGLOverlay layers={[layers]} /> */}
         <Marker 
           longitude={marker.longitude}
           latitude={marker.latitude}

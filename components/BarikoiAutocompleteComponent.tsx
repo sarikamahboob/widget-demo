@@ -15,7 +15,7 @@ const BarikoiAutocompleteComponent = () => {
       }}
     >
       <BarikoiAutocomplete
-        apiKey="bkoi_83d9e819b6e1532612d485a65af861c5a9696798352f9bc0be8d9a2430a9f9f6"
+        apiKey={process.env.NEXT_PUBLIC_BKOI_API_KEY}
         className={{
           container: 'custom-container',
           input: 'custom-input',

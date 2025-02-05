@@ -8,7 +8,7 @@ import { useControl } from 'react-bkoi-gl';
 import DrawControl from './DrawControl';
 
 const BarikoiMapComponent = () => {
-  const BARIKOI_API_KEY = 'bkoi_83d9e819b6e1532612d485a65af861c5a9696798352f9bc0be8d9a2430a9f9f6'; // Replace with your actual API key
+  const BARIKOI_API_KEY = process.env.NEXT_PUBLIC_BKOI_API_KEY; 
   const { selectedPlace } = useAutocomplete();
   const { setCenterPoint } = useMap();
 
