@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import StoreProvider from "@/components/StoreProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,9 +15,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        {children}
-      </body>
+      <head>
+        <link
+          href="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css"
+          rel="stylesheet"
+        />
+        <script src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
+      </head>
+      <StoreProvider>
+        <body>
+          {children}
+        </body>
+      </StoreProvider>
     </html>
   );
 }

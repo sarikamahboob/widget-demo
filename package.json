@@ -13,14 +13,18 @@
     "@deck.gl/layers": "^9.1.0",
     "@deck.gl/mapbox": "^9.1.0",
     "@mapbox/mapbox-gl-draw": "^1.5.0",
+    "@reduxjs/toolkit": "^2.5.1",
+    "antd": "^5.23.3",
     "barikoi-map-widget": "^1.0.3",
     "deck.gl": "^9.1.0",
+    "mapillary-js": "^4.1.2",
     "next": "^14",
     "react": "^18",
     "react-bkoi-gl": "^1.0.5",
     "react-dom": "^18",
     "react-icons": "^5.4.0",
-    "react-map-gl": "^8.0.0"
+    "react-map-gl": "^8.0.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

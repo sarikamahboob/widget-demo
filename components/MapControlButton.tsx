@@ -19,18 +19,7 @@ const MapControlButton: React.FC<MapControlButtonProps> = ({
       <Tooltip title={title} placement="left">
         <button
           onClick={onClick}
-          style={{
-            padding: "4px 5px",
-            backgroundColor: isActive ? "#82CD47" : "#ffffff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginBottom: "10px",
-            fontSize: "20px",
-            boxShadow:
-              "rgba(60, 64, 67, 0.1) 0px 0px 0px 2px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
-          }}
+          className={`p-1 ${isActive ? 'bg-[#82CD47]' : 'bg-white'} text-white border-none rounded cursor-pointer mb-2.5 text-xl shadow-md`}
         >
           {icon}
         </button>

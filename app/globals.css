@@ -56,3 +56,71 @@
 .fullContainer {
   position: relative;
 }
+
+._border_radius_5 {
+  border-radius: 5px;
+}
+
+/* antd float button style start*/
+.ant-float-btn {
+  width: 70px !important;
+}
+.searchBars {
+  padding: 10px;
+}
+.ant-float-btn-body {
+  padding: 10px 0px !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.ant-float-btn-default .ant-float-btn-body {
+  background-color: #32a66b;
+}
+
+.ant-float-btn-default .ant-float-btn-body:hover {
+  background-color: #32a66b;
+}
+
+.ant-float-btn-group-square
+  .ant-float-btn-group-wrap
+  .ant-float-btn-square
+  .ant-float-btn-body {
+  background-color: transparent;
+}
+
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content {
+  padding: 0px !important;
+}
+
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
+  width: 100%;
+}
+
+.ant-float-btn-group-square .ant-float-btn-square {
+  border-start-end-radius: 8px;
+  border-start-start-radius: 8px;
+}
+
+.ant-float-btn-square {
+  height: 54px !important;
+}
+
+.ant-float-btn-group-square
+  .ant-float-btn-group-wrap
+  .ant-float-btn-square
+  .ant-float-btn-body {
+  width: 100%;
+  height: 100%;
+}
+
+.ant-popover .ant-popover-title {
+  min-width: 80px;
+}
+
+.activeButton {
+  background-color: #eaffc9;
+  border-radius: 8px;
+  padding: 2px;
+  border: 2px solid #73a942;
+}

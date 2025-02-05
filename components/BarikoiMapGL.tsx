@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Map, FullscreenControl, GeolocateControl, NavigationControl, ScaleControl, Marker, useControl } from 'react-bkoi-gl';
-import { GeoJsonLayer } from '@deck.gl/layers' // Import DeckGL Layer
+import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers' // Import DeckGL Layer
 import { MapboxOverlay } from '@deck.gl/mapbox' // Import Mapbox Overlay
 
 // Import Styles
@@ -11,6 +11,12 @@ import "react-bkoi-gl/styles"
 import MapControlButton from './MapControlButton';
 import { TbHexagon3D } from 'react-icons/tb';
 import DrawControl from './DrawControl';
+import SwitchButton from './MapillaryComponents/SwitchButton';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { setImgId, setScatterData, setSingleMapillaryData } from '@/redux/reducers/mapReducer';
+import MapillaryLayer from './MapillaryComponents/MapillaryLayer';
+import MapillaryViewer from './MapillaryComponents/MapillaryViewer';
+import MapLayer from './MapLayer';
 
 // Create DeckGL Overlay
 const DeckGLOverlay = (props: any) => {
@@ -36,6 +42,13 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
   const [is3DMode, setIs3DMode] = useState(false);
   const [features, setFeatures] = useState({});
 
+  const mapillaryData = useAppSelector((state) => state?.map?.mapillaryData ?? null);
+  const singleMapillaryData = useAppSelector((state) => state?.map?.singleMapillaryData ?? null);
+  const imgId = useAppSelector((state) => state?.map?.imgId ?? null);
+  const scatterData = useAppSelector((state) => state?.map?.scatterData ?? null);
+  const mapLayer = useAppSelector((state) => state?.map?.mapLayer ?? null);
+  console.log({mapLayer})
+
   const initialViewState = {
     longitude: 90.36402,
     latitude: 23.823731,
@@ -52,6 +65,33 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
     longitude: initialViewState.longitude
   });
 
+  useEffect(() => {
+    if (imgId) {
+      fetch(
+        `https://graph.mapillary.com/${imgId}?access_token=MLY|9965372463534997|6cee240fad8e5571016e52cd3f24d7f8&fields=computed_geometry`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          dispatch(setScatterData(data.computed_geometry?.coordinates));
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [imgId]);
+  useEffect(() => {
+    if (imgId) {
+      fetch(
+        `https://graph.mapillary.com/${imgId}?access_token=MLY|9965372463534997|6cee240fad8e5571016e52cd3f24d7f8&fields=computed_geometry`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          dispatch(setScatterData(data.computed_geometry?.coordinates));
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [imgId]);
+
+  const modifiedScatterData = [{ coordinates: scatterData }];
+
   const layers = new GeoJsonLayer({
     id: 'GeoJsonLayer',
     data: "https://raw.githubusercontent.com/faiazhossain/dhaka-geojson/main/dhaka-geojson.geojson",
@@ -67,6 +107,25 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
     opacity: 0.6, 
     zIndex: 100
   });
+
+  console.log({modifiedScatterData})
+
+  const layers2 =  new ScatterplotLayer({
+    id: 'scatterplot-layer',
+    data: modifiedScatterData,
+    pickable: true,
+    opacity: 1,
+    stroked: true,
+    filled: true,
+    radiusScale: 20,
+    radiusMinPixels: 1,
+    radiusMaxPixels: 8,
+    lineWidthMaxPixels: 1,
+    getPosition: (d) => d.coordinates,
+    getRadius: (d) => Math.sqrt(d.exits),
+    getFillColor: (d) => [255, 140, 0],
+    getLineColor: (d) => [0, 0, 0],
+  })
 
   // On marker drag
   const onMarkerDrag = useCallback((event: any) => {
@@ -121,20 +180,61 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
     });
   }, []);
 
+  // Mapillary
+  const mapillaryImageId = useAppSelector((state) => state.map.mapillaryImageId);
+  const dispatch = useAppDispatch();
+  const handleClick = (e:any) => {
+    console.log({ e });
+    e.preventDefault();
+    console.log()
+    if (mapillaryImageId) {
+      // Navigate to the specific Mapillary image
+      dispatch(setSingleMapillaryData(mapillaryImageId));
+      dispatch(setImgId(null));
+    } else if (mapillaryData) {
+      // Query for mapillary features
+      const mapillaryFeatures = e.target.queryRenderedFeatures(e.point, {
+        layers: ['mapillary-images'], // Specify the layers you want to query
+      });
+      console.log({ mapillaryFeatures });
+      // Check if there are mapillary features and the first feature has an "id" property
+      if (mapillaryFeatures.length > 0 && mapillaryFeatures[0]?.properties?.id) {
+        // Dispatch actions if the conditions are met
+        dispatch(setSingleMapillaryData(mapillaryFeatures[0]?.properties?.id));
+        dispatch(setImgId(null));
+      }
+    }
+  };
+
+  useEffect(()=> {
+    if (mapillaryImageId) {
+      dispatch(setSingleMapillaryData(mapillaryImageId));
+      dispatch(setImgId(null));
+    }
+  },[mapillaryImageId])
+
+  const handleMapillaryData = () => {
+    dispatch(setSingleMapillaryData(null));
+  };
+
+  
+
   return (
     <div
       ref={mapContainer} style={containerStyles}
     >
       <Map
         ref={mapRef}
-        mapStyle={mapStyle}
+        mapStyle={mapLayer || mapStyle}
         style={{ width: "100%", height: "100%" }}
         initialViewState={initialViewState}
         doubleClickZoom={false}
         dragRotate={false}
         attributionControl={false}
+        onClick={handleClick}
+        cursor='pointer'
       >
-        {/* <DeckGLOverlay layers={[layers]} /> */}
+        <DeckGLOverlay layers={[layers, layers2]} />
         <Marker 
           longitude={marker.longitude}
           latitude={marker.latitude}
@@ -180,8 +280,35 @@ const BarikoiMapGL = ({geolocateControl, fullScreenControl, navigationControl, s
             onUpdate={onUpdate}
             onDelete={onDelete}
           />
+          <SwitchButton  id={setSingleMapillaryData}></SwitchButton>
         </div>
+        <MapillaryLayer
+          mapillaryData={mapillaryData}
+          singleMapillaryData={singleMapillaryData}
+          handleMapillaryData={handleMapillaryData}
+        />
       </Map>
+      {singleMapillaryData && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "10px",
+            left: "10px",
+            width: "300px",
+            height: "200px", 
+            zIndex: 1000,
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+          }}
+        >
+          <MapillaryViewer
+            imageId={singleMapillaryData}
+            accessToken="MLY|9965372463534997|6cee240fad8e5571016e52cd3f24d7f8"
+            onMapillaryData={handleMapillaryData}
+          />
+        </div>
+      )}
+      <MapLayer></MapLayer>
     </div>
   )
 }
